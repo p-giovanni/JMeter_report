@@ -1,7 +1,8 @@
 # JMeter report
 This is a project to explore a time serie - a JMeter performance csv file - using [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/).
 
-To see the code open the note
+To see the code open the notebook here [JMeter_Report.ipynb](./notebook/JMeter_Report.ipynb).
+The chars are in the [images](./images/) directory.
 
 ## Disclaimer
 I do know very well Pandas, Matplotlib but, as all the programmers, I do bugs.
