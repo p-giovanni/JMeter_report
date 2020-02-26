@@ -2,7 +2,12 @@
 This is a project to explore a time serie - a JMeter performance csv file - using [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/).
 
 To see the code open the notebook here [JMeter_Report.ipynb](./notebook/JMeter_Report.ipynb).
-The chars are in the [images](./images/) directory.
+The chars are in the [images](./images/) directory. 
+The real output is the picture containing all the charts, that is this one: [Test-All-CHARTS.png](./images/Test-All-CHARTS.png)
+
+The same chart can be exported in PDF format, see: [Test-All-CHARTS.pdf](./images/Test-All-CHARTS.pdf). 
+
+All the settings are in a note cell - the one called **settings section**.
 
 ## Disclaimer
 I do know very well Pandas, Matplotlib but, as all the programmers, I do bugs.
@@ -12,12 +17,10 @@ So beware, I have checked the results as carefully as I can but nevertheless do 
 ```diff
 ! Doing
 ```
-I am not yet sattisfied by the charts, there are a few improvements I'd like to do.
-There is also a bug (better a known one): the picture in the image file do not span the entire picture surface.
+I am not yet satisfied by the charts, there are a few improvements I'd like to do.
 
 **TODO**: 
-- [o] a text box containing the general statistics; 
-- [o] a picture containing all the charts;
+- [o] a note text box on the left containing comments, info, etc about the test; 
 - [o] a batch Python script to create the charts; 
 
 ## Data file
