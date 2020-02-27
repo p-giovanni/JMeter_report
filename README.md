@@ -20,7 +20,6 @@ So beware, I have checked the results as carefully as I can but nevertheless do 
 I am not yet satisfied by the charts, there are a few improvements I'd like to do.
 
 **TODO**: 
-- [o] a note text box on the left containing comments, info, etc about the test; 
 - [o] a batch Python script to create the charts; 
 
 ## Data file
@@ -41,6 +40,6 @@ pip install -r requirements.txt
 ```
 To run **Jupyter** use this command:
 ```bash
-jupyter notebook --notebook-dir <path to your installation>/JMeter_report/notebook --port=9191
+jupyter lab --notebook-dir <path to your installation>/JMeter_report/notebook --port=9191
 ```
 
