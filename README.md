@@ -27,8 +27,8 @@ The data file is the standard JMeter log file and have the following columns str
 
 |timeStamp| elapsed | responseMessage | responseCode | responseCode | grpThreads | allThreads |
 |:-------:|:---------------:| ------------:| ------------:| ----------:| ----------:| ----------:|
-|1526484723967|125|C2C P1 - HTTP Request|200|OK|1|1|
-|1526484723100|20|C2C P1 - HTTP Request|200|OK|1|1|
+|1526484723967|125|AAA P1 - HTTP Request|200|OK|1|1|
+|1526484723100|20|AAA P1 - HTTP Request|200|OK|1|1|
 
 ## Installation and build
 Clone this repository and than:
