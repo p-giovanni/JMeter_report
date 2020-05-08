@@ -44,4 +44,4 @@ jupyter lab --notebook-dir <path to your installation>/JMeter_report/notebook --
 ```
 ## Report chart
 
-![JMeter report chart](./images/Test-All-CHARTS.pdf)
+![JMeter report chart](./images/Test-All-CHARTS.pdf?)
