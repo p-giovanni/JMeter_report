@@ -16,7 +16,7 @@ So beware, I have checked the results as carefully as I can but nevertheless do 
 ## Project status
 - `#c5f015`
 ```diff
-! Doing
++ Done
 ```
 I am not yet satisfied by the charts, there are a few improvements I'd like to do.
 
