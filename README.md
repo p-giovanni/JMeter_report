@@ -14,6 +14,7 @@ I do know very well Pandas, Matplotlib but, as all the programmers, I do bugs.
 So beware, I have checked the results as carefully as I can but nevertheless do not take for granted my results, check by yourself my code and decide if it is correct or not.
 
 ## Project status
+- `#c5f015`
 ```diff
 ! Doing
 ```
