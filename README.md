@@ -42,4 +42,6 @@ To run **Jupyter** use this command:
 ```bash
 jupyter lab --notebook-dir <path to your installation>/JMeter_report/notebook --port=9191
 ```
+## Report chart
 
+![JMeter report chart](./images/Test-All-CHARTS.pdf)
