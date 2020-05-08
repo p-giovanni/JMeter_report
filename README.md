@@ -1,8 +1,8 @@
 # JMeter report
-This is a project to explore a time serie - a JMeter performance csv file - using [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/).
+This is a project to explore a time serie - a JMeter performance csv file (fake data) - using [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/).
 
 To see the code open the notebook here [JMeter_Report.ipynb](./notebook/JMeter_Report.ipynb).
-The chars are in the [images](./images/) directory. 
+The charts are in the [images](./images/) directory. 
 The real output is the picture containing all the charts, that is this one: [Test-All-CHARTS.png](./images/Test-All-CHARTS.png)
 
 The same chart can be exported in PDF format, see: [Test-All-CHARTS.pdf](./images/Test-All-CHARTS.pdf). 
