@@ -356,11 +356,80 @@ def elapsed_chart(ax: mp.axes.Axes
         ax.set_xlabel(labels["elapsed x"][0],    fontsize=labels['elapsed x'][1])
             
     except Exception as ex:
-        msg = "threads_chart failed - {ex}".format(ex=ex)
+        msg = "elapsed_chart failed - {ex}".format(ex=ex)
+        log.error(msg)
         return ResultKo(Exception(msg))
     else:
         rv = ResultOk(True)
     log.info(" <<")
+    return rv
+
+def elapsed_binned_chart(ax: mp.axes.Axes
+                        ,binned_df: pd.DataFrame
+                        ,global_statistics
+                        ,labels: dict
+                        ,time_limits
+                        ,colors=["#0000e6", "#d5d5d5", "#c87607"]):
+    log = logging.getLogger('elapsed_binned_chart')
+    log.info(" >>")
+
+    rv: ResultValue = ResultKo(Exception("Error"))
+    try:
+        x=binned_df.index
+        y=binned_df['mean']
+        x_snum=binned_df["dt centered"]
+        y_snum=binned_df['count']
+
+        set_axes_common_properties(ax, no_grid=False)
+        ax.set_xlim(time_limits)
+
+        ax.step(x, y, color=colors[0])
+        ax.hlines(y=global_statistics["mean elapsed"]
+                 ,xmin=time_limits[0], xmax=time_limits[1]
+                 ,linewidth=2
+                 ,color=colors[2])
+        
+        ax.text(x=time_limits[0]
+               ,y=global_statistics["mean elapsed"] + 50
+               ,s=labels["elapsed-binned mean txt"][0]
+               ,color=colors[2]
+               ,fontsize=labels["elapsed-binned mean txt"][1])
+
+        minutes = mdates.MinuteLocator(interval = 1)
+        minutes_fmt = mdates.DateFormatter('%H:%M')
+
+        ax.xaxis.set_major_locator(minutes)
+        ax.xaxis.set_major_formatter(minutes_fmt)
+       
+        ax.tick_params(axis='x', labelrotation=80)
+
+        ax.set_title(labels['elapsed-binned title'][0], fontsize=labels['elapsed-binned title'][1])
+        
+        ax.set_ylabel(labels["elapsed-binned y"][0], fontsize=labels['elapsed-binned y'][1])
+        ax.set_xlabel(labels["elapsed-binned x"][0], fontsize=labels['elapsed-binned x'][1])
+        remove_tick_lines('x', ax)
+        
+        # Second y axis.
+        ax_snum = ax.twinx()
+        set_axes_common_properties(ax_snum, no_grid=True)
+        
+        ax_snum.scatter(x_snum, y_snum, color=colors[1], s=50, alpha=0.9)
+        
+        ax_snum.set_ylabel(labels["elapsed-binned snum y"][0], fontsize=labels['elapsed-binned snum y'][1])
+#        ax_snum.xaxis.set_major_locator(minutes)
+        ax_snum.xaxis.set_major_formatter(minutes_fmt)     
+        ax_snum.tick_params(axis='x', labelrotation=80)
+        remove_tick_lines('x', ax_snum)
+        remove_tick_lines('y', ax_snum)
+        
+    except Exception as ex:
+        msg = "elapsed_chart failed - {ex}".format(ex=ex)
+        log.error(msg)
+        return ResultKo(Exception(msg))
+
+    else:
+        rv = ResultOk(True) 
+    log.info(" <<")   
     return rv
 
 def main(args: argparse.Namespace) -> ResultValue:
@@ -399,8 +468,16 @@ def main(args: argparse.Namespace) -> ResultValue:
 
             if chart_name == "thread":
                 rv = threads_chart(ax=ax[idx], df=df_dict()["df"], labels=labels(), time_limits=time_limits)
+            
             elif chart_name == "elapsed":
                 rv = elapsed_chart(ax=ax[idx], df=df_dict()["df"], errors_df=df_dict()["errors_df"], labels=labels(), time_limits=time_limits)
+            
+            elif chart_name == "ebinned":
+                rv = elapsed_binned_chart(ax[idx]
+                                         ,binned_df=df_dict()["binned_elapsed"]
+                                         ,global_statistics=global_stats()
+                                         ,labels=labels()
+                                         ,time_limits=time_limits)
             else:
                 msg = "Unknown chart name : {c}".format(c=chart_name)
                 log.error(msg)
@@ -425,7 +502,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_frame", "-df", nargs=1,
                         help="Create a dataframe from JMeter log file.")
     parser.add_argument("--chart", "-c", nargs=2,
-                        help="Create the named chart using the given file name [thread|elapsed].")
+                        help="Create the named chart using the given file name [thread|elapsed|ebinned].")
     args = parser.parse_args()
 
     rv = main(args)

@@ -27,6 +27,14 @@
             "program": "${workspaceFolder}/src/CreateReport.py",
             "console": "integratedTerminal",
             "args": ["--chart", "elapsed", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
+        },
+        {
+            "name": "Chart Binned Elapsed",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/CreateReport.py",
+            "console": "integratedTerminal",
+            "args": ["--chart", "ebinned", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
         }
     ]
 }   
