@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Dataframe",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/CreateReport.py",
+            "console": "integratedTerminal",
+            "args": ["--data_frame", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
+        },
+        {
+            "name": "Chart Threads",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/CreateReport.py",
+            "console": "integratedTerminal",
+            "args": ["--chart", "thread", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
+        },
+        {
+            "name": "Chart Elapsed",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/CreateReport.py",
+            "console": "integratedTerminal",
+            "args": ["--chart", "elapsed", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
+        }
+    ]
+}   
