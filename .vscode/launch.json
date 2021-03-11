@@ -35,6 +35,22 @@
             "program": "${workspaceFolder}/src/CreateReport.py",
             "console": "integratedTerminal",
             "args": ["--chart", "ebinned", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
+        },
+        {
+            "name": "Chart Frequency",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/CreateReport.py",
+            "console": "integratedTerminal",
+            "args": ["--chart", "frequency", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
+        },
+        {
+            "name": "Chart TPS",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/CreateReport.py",
+            "console": "integratedTerminal",
+            "args": ["--chart", "tps", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
         }
     ]
 }   

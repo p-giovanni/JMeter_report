@@ -1,20 +1,15 @@
 import os
-import re
 import sys
-import csv
-import json
-import codecs
-import locale
-import requests
 import datetime as dt
 import argparse
+from enum import Enum
 
 import logging
 
 from typing import Union, Optional, Tuple, List, cast
 
-import numpy as np  # type: ignore
-import pandas as pd  # type: ignore
+import numpy as np                      # type: ignore
+import pandas as pd                     # type: ignore
 
 import matplotlib as mp                 # type: ignore
 from matplotlib import pyplot as plt    # type: ignore
@@ -32,6 +27,10 @@ from ChartTools import every_nth_tick
 from ChartTools import autolabel
 from ChartTools import set_axes_common_properties
 from ChartTools import text_box
+
+class TypeOfChart(Enum):
+    PERCENTAGE = 1
+    FREQUENCIES = 2
 
 def picture_title_text(title:str, global_statistics:dict)-> ResultValue:
     log = logging.getLogger('picture_title_text')
@@ -366,10 +365,10 @@ def elapsed_chart(ax: mp.axes.Axes
 
 def elapsed_binned_chart(ax: mp.axes.Axes
                         ,binned_df: pd.DataFrame
-                        ,global_statistics
+                        ,global_statistics:dict
                         ,labels: dict
-                        ,time_limits
-                        ,colors=["#0000e6", "#d5d5d5", "#c87607"]):
+                        ,time_limits:List
+                        ,colors=["#0000e6", "#d5d5d5", "#c87607"]) -> ResultValue:
     log = logging.getLogger('elapsed_binned_chart')
     log.info(" >>")
 
@@ -432,6 +431,149 @@ def elapsed_binned_chart(ax: mp.axes.Axes
     log.info(" <<")   
     return rv
 
+def elapsed_frequency_chart(ax: mp.axes.Axes
+                           ,df: pd.DataFrame
+                           ,global_statistics:dict
+                           ,labels: dict
+                           ,colors:List=["#BEE2F0", "#d5d5d5", "#c87607"]) -> ResultValue:
+    log = logging.getLogger('elapsed_frequency_chart')
+    log.info(" >>")
+
+    rv: ResultValue = ResultKo(Exception("Error"))
+    try:
+        frequencies = config_elapsed_frequency_chart(df,global_statistics,labels)
+        if frequencies.is_in_error():
+            msg = "Frequency calculation failure"
+            log.error(msg)
+            return ResultKo(Exception(msg))
+        else:
+            y = frequencies()
+            x = frequencies().index.astype(str)
+        set_axes_common_properties(ax, no_grid=False)
+        ax.set_title(labels["elapsed-frequency title"][0], fontsize=labels["elapsed-frequency title"][1])
+        ax.set_ylabel(labels["elapsed-frequency y"][0], fontsize=labels["elapsed-frequency y"][1])
+        ax.set_xlabel(labels["elapsed-frequency x"][0], fontsize=labels["elapsed-frequency x"][1])
+
+        width = 0.5
+        rects = ax.bar(x, y, width=width, color=colors[0], label=labels["elapsed-frequency label"][0])
+
+        autolabel(rects, ax, 1)
+
+        ax.tick_params(axis='both', labelsize=14)
+        ax.set_xticklabels(x, rotation=80)
+
+        remove_tick_lines('y', ax)
+        remove_tick_lines('x', ax)
+    
+    except Exception as ex:
+        msg = "elapsed_frequency_chart failed - {ex}".format(ex=ex)
+        log.error(msg)
+        return ResultKo(Exception(msg))
+    else:
+        rv = ResultOk(True)
+    log.info(" <<")
+    return rv
+ 
+def transaction_per_second_chart(ax: mp.axes.Axes
+                                ,binned_df:pd.DataFrame
+                                ,labels: dict
+                                ,time_limits:List
+                                ,colors:List=["#0000e6", "#d5d5d5", "#c87607"]) -> ResultValue:
+    log = logging.getLogger('transaction_per_second_chart')
+    log.info(" >>")
+
+    rv: ResultValue = ResultKo(Exception("Error"))
+    try:
+        x=binned_df.index
+        y=binned_df['tps'].values
+        
+        set_axes_common_properties(ax, no_grid=False)
+        ax.set_xlim(time_limits)
+
+        minutes = mdates.MinuteLocator(interval = 1)
+        minutes_fmt = mdates.DateFormatter('%H:%M')
+
+        ax.xaxis.set_major_locator(minutes)
+        ax.xaxis.set_major_formatter(minutes_fmt)
+       
+        ax.tick_params(axis='x', labelrotation=80)
+
+        ax.set_title(labels["tps title"][0], fontsize=labels["tps title"][1])
+        ax.set_ylabel(labels["tps y"][0], fontsize=labels["tps y"][1])
+        ax.set_xlabel(labels["tps x"][0], fontsize=labels["tps x"][1])
+
+        remove_tick_lines('x', ax)
+        remove_tick_lines('y', ax)
+        
+        ax.step(x, y, color=colors[0])
+        
+    except Exception as ex:
+        msg = "transaction_per_second_chart failed - {ex}".format(ex=ex)
+        log.error(msg)
+        return ResultKo(Exception(msg))
+    else:
+        rv = ResultOk(True) 
+    log.info(" <<")
+    return rv    
+
+def config_elapsed_frequency_chart(df:pd.DataFrame
+                                  ,global_statistics:dict
+                                  ,labels:dict
+                                  ,type_of_chart = TypeOfChart.PERCENTAGE) -> ResultValue:
+    log = logging.getLogger('config_elapsed_frequency_chart')
+    log.info(" >>")
+
+    rv: ResultValue = ResultKo(Exception("Error"))
+    y = None
+    try:
+        # Set the data set to be visualized.
+        bin_step = 250
+        cut_bins = list(range(0, global_statistics["max elapsed"], bin_step))
+        bin_size = len(cut_bins)
+
+        df['elapsed binned'] = pd.cut(df['elapsed'], bins=cut_bins, right=True)
+        frequencies = df['elapsed binned'].value_counts(sort=False)
+
+        # Quality check.
+        #assert df.shape[0] == df['elapsed binned'].value_counts().sum(), "The aggregate form must have the same total number of the total num of sample."
+
+        y = None
+        if type_of_chart == TypeOfChart.FREQUENCIES:
+            y = frequencies
+            labels["elapsed-frequency y"]=labels["elapsed-frequency y #"]
+        else:
+            y = frequencies.apply(lambda row: round((row / df.shape[0]) * 100, 1))
+            labels["elapsed-frequency y"]=labels["elapsed-frequency y %"]
+    except Exception as ex:
+        msg = "config_elapsed_frequency_chart failed - {ex}".format(ex=ex)
+        log.error(msg)
+        return ResultKo(Exception(msg))
+    else:
+        rv = ResultOk(y)
+    log.info(" <<")
+    return rv
+
+def quantiles_box_text(labels:dict, global_statistics:dict) -> ResultValue:
+    log = logging.getLogger('quantiles_box_text')
+    log.info(" >>")
+
+    rv: ResultValue = ResultKo(Exception("Error"))    
+    txt = None
+    try:
+        txt = "{title}\n\n".format(title=labels["quantiles txt title"][0])
+        for quantile, value in zip(global_statistics["quantiles elapsed"].index
+                                  ,global_statistics["quantiles elapsed"].values):
+            txt = txt + "{q}° => {v} ms\n".format(q=int((quantile*100)), v=int(value))
+    except Exception as ex:
+        msg = "quantiles_box_text failed - {ex}".format(ex=ex)
+        log.error(msg)
+        return ResultKo(Exception(msg))    
+    else:
+        rv = ResultOk(txt)
+        
+    log.info(" <<")
+    return rv
+
 def main(args: argparse.Namespace) -> ResultValue:
     log = logging.getLogger('Main')
     log.info(" >>")
@@ -478,6 +620,16 @@ def main(args: argparse.Namespace) -> ResultValue:
                                          ,global_statistics=global_stats()
                                          ,labels=labels()
                                          ,time_limits=time_limits)
+            elif chart_name == "tps":
+                rv = transaction_per_second_chart(ax=ax[idx]
+                                                ,binned_df=df_dict()["binned_elapsed"]
+                                                ,labels=labels()
+                                                ,time_limits=time_limits)
+            elif chart_name == "frequency":
+                rv = elapsed_frequency_chart(ax=ax[idx]
+                                            ,df=df_dict()["df"]
+                                            ,global_statistics=global_stats()
+                                            ,labels=labels())
             else:
                 msg = "Unknown chart name : {c}".format(c=chart_name)
                 log.error(msg)
@@ -502,7 +654,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_frame", "-df", nargs=1,
                         help="Create a dataframe from JMeter log file.")
     parser.add_argument("--chart", "-c", nargs=2,
-                        help="Create the named chart using the given file name [thread|elapsed|ebinned].")
+                        help="Create the named chart using the given file name [thread|elapsed|ebinned|frequency].")
     args = parser.parse_args()
 
     rv = main(args)
