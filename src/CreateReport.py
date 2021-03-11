@@ -28,6 +28,8 @@ from ChartTools import autolabel
 from ChartTools import set_axes_common_properties
 from ChartTools import text_box
 
+ok_codes = [200, 202]
+
 class TypeOfChart(Enum):
     PERCENTAGE = 1
     FREQUENCIES = 2
@@ -574,11 +576,71 @@ def quantiles_box_text(labels:dict, global_statistics:dict) -> ResultValue:
     log.info(" <<")
     return rv
 
+def single_chart(chart_name:str, file_name:str, labels:dict) -> ResultValue:
+    log = logging.getLogger('single_chart')
+    log.info(" >>")
+    try:
+        chart_name = chart_name.lower()
+                  
+        df_dict = get_dataframe_from_csv(file_name, ok_codes=ok_codes)
+        if df_dict.is_ok() == False:
+            log.error(df_dict())
+            return ResultKo(df_dict())
+                 
+        global_stats = get_global_statistics(df=df_dict()["df"], errors_df=df_dict()["errors_df"])
+        time_limits = [global_stats()["test begin"] - pd.Timedelta(minutes=0.5) 
+                      ,global_stats()["test end"]   + pd.Timedelta(minutes=0.5)]
+                 
+        fig = plt.figure(figsize=(20, 10))
+        gs1 = gridspec.GridSpec(1, 1, hspace=0.2, wspace=0.1, figure=fig)
+        ax = []
+        ax.append(fig.add_subplot(gs1[0, 0]))
+        idx = 0
+                 
+        if chart_name == "thread":
+            rv = threads_chart(ax=ax[idx], df=df_dict()["df"], labels=labels, time_limits=time_limits)
+        
+        elif chart_name == "elapsed":
+            rv = elapsed_chart(ax=ax[idx], df=df_dict()["df"], errors_df=df_dict()["errors_df"], labels=labels, time_limits=time_limits)
+        
+        elif chart_name == "ebinned":
+            rv = elapsed_binned_chart(ax[idx]
+                                     ,binned_df=df_dict()["binned_elapsed"]
+                                     ,global_statistics=global_stats()
+                                     ,labels=labels
+                                     ,time_limits=time_limits)
+        elif chart_name == "tps":
+            rv = transaction_per_second_chart(ax=ax[idx]
+                                            ,binned_df=df_dict()["binned_elapsed"]
+                                            ,labels=labels
+                                            ,time_limits=time_limits)
+        elif chart_name == "frequency":
+            rv = elapsed_frequency_chart(ax=ax[idx]
+                                        ,df=df_dict()["df"]
+                                        ,global_statistics=global_stats()
+                                        ,labels=labels)
+        else:
+            msg = "Unknown chart name : {c}".format(c=chart_name)
+            log.error(msg)
+            return ResultKo(Exception(msg))
+                 
+        if rv.is_ok():
+            plt.savefig(os.path.join(os.sep, "tmp", "jMeter-{c}.png".format(c=chart_name))
+                                    ,bbox_inches = 'tight'
+                                    ,pad_inches = 0.2)
+
+    except Exception as ex:
+        log.error("Exception caught - {ex}".format(ex=ex))
+        rv = ResultKo(ex)
+                     
+    log.info(" <<")
+    return rv
+
 def main(args: argparse.Namespace) -> ResultValue:
     log = logging.getLogger('Main')
     log.info(" >>")
     rv: ResultValue = ResultKo(Exception("Error"))
-    ok_codes = [200, 202]
+    
     labels = create_label_dict()
     try:
         if args.data_frame is not None:
@@ -590,55 +652,7 @@ def main(args: argparse.Namespace) -> ResultValue:
                 rv = ResultOk(True)
 
         elif args.chart is not None:
-            chart_name = args.chart[0].lower()
-            file_name = args.chart[1]
-
-            df_dict = get_dataframe_from_csv(file_name, ok_codes=ok_codes)
-            if df_dict.is_ok() == False:
-                log.error(df_dict())
-                return ResultKo(df_dict())
-
-            global_stats = get_global_statistics(df=df_dict()["df"], errors_df=df_dict()["errors_df"])
-            time_limits = [global_stats()["test begin"] - pd.Timedelta(minutes=0.5) 
-                          ,global_stats()["test end"]   + pd.Timedelta(minutes=0.5)]
-
-            fig = plt.figure(figsize=(20, 10))
-            gs1 = gridspec.GridSpec(1, 1, hspace=0.2, wspace=0.1, figure=fig)
-            ax = []
-            ax.append(fig.add_subplot(gs1[0, 0]))
-            idx = 0
-
-            if chart_name == "thread":
-                rv = threads_chart(ax=ax[idx], df=df_dict()["df"], labels=labels(), time_limits=time_limits)
-            
-            elif chart_name == "elapsed":
-                rv = elapsed_chart(ax=ax[idx], df=df_dict()["df"], errors_df=df_dict()["errors_df"], labels=labels(), time_limits=time_limits)
-            
-            elif chart_name == "ebinned":
-                rv = elapsed_binned_chart(ax[idx]
-                                         ,binned_df=df_dict()["binned_elapsed"]
-                                         ,global_statistics=global_stats()
-                                         ,labels=labels()
-                                         ,time_limits=time_limits)
-            elif chart_name == "tps":
-                rv = transaction_per_second_chart(ax=ax[idx]
-                                                ,binned_df=df_dict()["binned_elapsed"]
-                                                ,labels=labels()
-                                                ,time_limits=time_limits)
-            elif chart_name == "frequency":
-                rv = elapsed_frequency_chart(ax=ax[idx]
-                                            ,df=df_dict()["df"]
-                                            ,global_statistics=global_stats()
-                                            ,labels=labels())
-            else:
-                msg = "Unknown chart name : {c}".format(c=chart_name)
-                log.error(msg)
-                return ResultKo(Exception(msg))
-
-            if rv.is_ok():
-                plt.savefig(os.path.join(os.sep, "tmp", "jMeter-{c}.png".format(c=chart_name))
-                                        ,bbox_inches = 'tight'
-                                        ,pad_inches = 0.2)
+            rv = single_chart(args.chart[0], args.chart[1], labels=labels())
 
     except Exception as ex:
         log.error("Exception caught - {ex}".format(ex=ex))
