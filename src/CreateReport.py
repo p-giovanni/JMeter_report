@@ -1,10 +1,10 @@
 import os
 import sys
-import datetime as dt
 import argparse
-from enum import Enum
-
 import logging
+from enum import Enum
+from datetime import datetime
+import datetime as dt
 
 from typing import Union, Optional, Tuple, List, cast
 
@@ -636,6 +636,113 @@ def single_chart(chart_name:str, file_name:str, labels:dict) -> ResultValue:
     log.info(" <<")
     return rv
 
+def create_report(log_file:str, output_path:str, report_type:str) -> ResultValue:
+    log = logging.getLogger('create_report')
+    log.info(" >>")
+    rv: ResultValue = ResultKo(Exception("Error"))
+    try:
+        report_type = report_type.upper()
+        if report_type not in ["PDF", "JPG", "PNG"]:
+            msg = "Unknown report type: {rt}".format(rt=report_type)
+            log.error(msg)
+            return ResultKo(Exception(msg))
+
+        df_dict = get_dataframe_from_csv(log_file, ok_codes=ok_codes)
+        if df_dict.is_ok() == False:
+            return ResultKo(Exception(df_dict.value))
+
+        df = df_dict()["df"]
+        df_errors = df_dict()["errors_df"]
+        df_binned = df_dict()["binned_elapsed"]
+
+        global_stats = get_global_statistics(df=df_dict()["df"], errors_df=df_dict()["errors_df"])
+        time_limits = [global_stats()["test begin"] - pd.Timedelta(minutes=0.5) 
+                      ,global_stats()["test end"]   + pd.Timedelta(minutes=0.5)]
+
+        labels = create_label_dict(language="en")()
+
+        fig0 = plt.figure(figsize=(21, 40)) #, constrained_layout=True)
+
+        gs1 = gridspec.GridSpec(6, 2
+                               ,figure=fig0
+                               ,hspace=0.25
+                               ,wspace=0.01 
+                               ,height_ratios=[1, 10, 10, 10, 10, 10]
+                               ,width_ratios=[10, 2])
+        ax = []
+
+        idx = 0
+        ax.append(fig0.add_subplot(gs1[0,0]))
+        text = picture_title_text(labels["picture_title"][0],  global_stats())
+        if text.is_ok() == True:
+            text_box(ax[idx], text(), fontsize=labels["picture_title"][1])
+
+        idx += 1
+        ax.append(fig0.add_subplot(gs1[1,0]))
+        threads_chart(ax=ax[idx], df=df, labels=labels, time_limits=time_limits)
+
+        idx += 1
+        ax.append(fig0.add_subplot(gs1[1, 1]))
+        stats_txt = statistics_box_text(global_stats(), labels)
+        if text.is_ok() == True:
+            text_box(ax[idx]
+                    ,stats_txt()
+                    ,fontsize=labels['statistics'][1]
+                    ,y=0.35
+                    ,x=0.2
+                    ,colors=["#e5e5e5", "#000000", "#000000"])
+
+        idx += 1
+        ax.append(fig0.add_subplot(gs1[2,0]))
+        elapsed_chart(ax=ax[idx], df=df, errors_df=df_errors, labels=labels, time_limits=time_limits)
+
+        idx += 1
+        ax.append(fig0.add_subplot(gs1[3,0]))
+        elapsed_binned_chart(ax[idx]
+                            ,binned_df=df_binned
+                            ,global_statistics=global_stats()
+                            ,labels=labels
+                            ,time_limits=time_limits)
+
+        idx += 1
+        ax.append(fig0.add_subplot(gs1[4,0]))
+        transaction_per_second_chart(ax=ax[idx]
+                                    ,binned_df=df_binned
+                                    ,labels=labels
+                                    ,time_limits=time_limits)
+
+        idx += 1
+        ax.append(fig0.add_subplot(gs1[5,0]))
+        elapsed_frequency_chart(ax=ax[idx]
+                               ,df=df
+                               ,global_statistics=global_stats()
+                               ,labels=labels)
+
+        idx += 1
+        ax.append(fig0.add_subplot(gs1[5,1]))
+
+        text = quantiles_box_text(labels, global_stats()) 
+        if text.is_ok() == True:
+            text_box(ax[idx], text(), fontsize=labels['quantiles'][1], colors=["#e5e5e5", "#000000", "#000000"], x=0.2, y=0.5)    
+
+        sample_date = datetime.now().strftime("%Y%m%d")
+        paper_type = 'a4'
+        plt.savefig(os.path.join(output_path
+                                ,"{prefix}All-CHARTS.{fmt}".format(fmt=report_type, prefix=sample_date))
+                   ,format=report_type
+                   ,papertype=paper_type 
+                   ,bbox_inches='tight'
+                   ,pad_inches=0.5)
+
+    except Exception as ex:
+        log.error("Exception (create_report) caught - {ex}".format(ex=ex))
+        rv = ResultKo(ex)
+    else:
+        rv: ResultValue = ResultOk(True)
+
+    log.info(" <<")
+    return rv
+
 def main(args: argparse.Namespace) -> ResultValue:
     log = logging.getLogger('Main')
     log.info(" >>")
@@ -653,6 +760,8 @@ def main(args: argparse.Namespace) -> ResultValue:
 
         elif args.chart is not None:
             rv = single_chart(args.chart[0], args.chart[1], labels=labels())
+        elif args.report is not None:
+            rv = create_report(args.report[0], args.report[1], args.report[2])
 
     except Exception as ex:
         log.error("Exception caught - {ex}".format(ex=ex))
@@ -661,14 +770,17 @@ def main(args: argparse.Namespace) -> ResultValue:
     return rv
 
 if __name__ == "__main__":
-    init_logger('/tmp', "report.log", log_level=logging.DEBUG,
-                std_out_log_level=logging.DEBUG)
+    init_logger('/tmp', "jm-report.log"
+               ,log_level=logging.DEBUG
+               ,std_out_log_level=logging.DEBUG)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_frame", "-df", nargs=1,
                         help="Create a dataframe from JMeter log file.")
     parser.add_argument("--chart", "-c", nargs=2,
                         help="Create the named chart using the given file name [thread|elapsed|ebinned|frequency].")
+    parser.add_argument("--report", "-r", nargs=3,
+                        help="log file, output path, [PDF|JPG|PNG]. Create the report using the given log file and save it in the givent path.")
     args = parser.parse_args()
 
     rv = main(args)

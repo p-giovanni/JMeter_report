@@ -26,8 +26,8 @@ def text_box(ax:mp.axes.Axes
             ,text:str
             ,colors:List[str]=["#FFFFFF", "#000000"]
             ,fontsize:int=14
-            ,x:int=0
-            ,y:int=0)-> bool:
+            ,x:float=0
+            ,y:float=0) -> bool:
     log = logging.getLogger('text_box')
     log.info(" >>")
     rv = False

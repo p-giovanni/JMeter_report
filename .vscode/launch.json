@@ -51,6 +51,14 @@
             "program": "${workspaceFolder}/src/CreateReport.py",
             "console": "integratedTerminal",
             "args": ["--chart", "tps", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
+        },
+        {
+            "name": "Report",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/CreateReport.py",
+            "console": "integratedTerminal",
+            "args": ["--report", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl", "/tmp", "jpg"]
         }
     ]
 }   
