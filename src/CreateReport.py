@@ -166,7 +166,7 @@ def create_label_dict(language:str="it")-> ResultValue :
       ,"quantiles txt title":       ("Quantiles / value table", 12)
       ,"statistics txt title":      ("Statistics:", 12)
               
-      ,"stats duration":            ("Begin datetime: {be}\nEnd datetime: {en}\nDuration: {d} (minuti)\n")
+      ,"stats duration":            ("Begin datetime: {be}\nEnd datetime: {en}\nDuration: {d} (minutes)\n")
       ,"stats sample num":          ("Number of samples: {n}\nSamples in error: {er}\n")
               
       ,"stats elapsed":             ("Elapsed min: {min} (ms)\nElapsed max: {max} (ms)\nElapsed mean: {avg} (ms)\nStandard error: {stde} (ms)\nElapsed median: {med} (ms)\n")
@@ -636,7 +636,7 @@ def single_chart(chart_name:str, file_name:str, labels:dict) -> ResultValue:
     log.info(" <<")
     return rv
 
-def create_report(log_file:str, output_path:str, report_type:str) -> ResultValue:
+def create_report(log_file:str, output_path:str, report_type:str, report_title:str) -> ResultValue:
     log = logging.getLogger('create_report')
     log.info(" >>")
     rv: ResultValue = ResultKo(Exception("Error"))
@@ -673,7 +673,7 @@ def create_report(log_file:str, output_path:str, report_type:str) -> ResultValue
 
         idx = 0
         ax.append(fig0.add_subplot(gs1[0,0]))
-        text = picture_title_text(labels["picture_title"][0],  global_stats())
+        text = picture_title_text(labels["picture_title"][0] if len(report_title) == 0 else report_title,  global_stats())
         if text.is_ok() == True:
             text_box(ax[idx], text(), fontsize=labels["picture_title"][1])
 
@@ -761,7 +761,7 @@ def main(args: argparse.Namespace) -> ResultValue:
         elif args.chart is not None:
             rv = single_chart(args.chart[0], args.chart[1], labels=labels())
         elif args.report is not None:
-            rv = create_report(args.report[0], args.report[1], args.report[2])
+            rv = create_report(args.report[0], args.report[1], args.report[2],report_title=args.chart_title[0])
 
     except Exception as ex:
         log.error("Exception caught - {ex}".format(ex=ex))
@@ -777,10 +777,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_frame", "-df", nargs=1,
                         help="Create a dataframe from JMeter log file.")
+    parser.add_argument("--chart_title", "-t", nargs=1,
+                        help="The title to be printed on the chart.")
     parser.add_argument("--chart", "-c", nargs=2,
                         help="Create the named chart using the given file name [thread|elapsed|ebinned|frequency].")
     parser.add_argument("--report", "-r", nargs=3,
-                        help="log file, output path, [PDF|JPG|PNG]. Create the report using the given log file and save it in the givent path.")
+                        help="log file, output path, [PDF|JPG|PNG]. Create the report using the given log file and save it in the given path.")
     args = parser.parse_args()
 
     rv = main(args)
