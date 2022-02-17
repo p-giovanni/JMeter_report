@@ -20,13 +20,13 @@ import matplotlib.ticker as mticker     # type: ignore
 
 from typing import Any, Tuple, Dict, Union
 
-from logger_init import init_logger
-from result_value import ResultKo, ResultOk, ResultValue
-from ChartTools import remove_tick_lines
-from ChartTools import every_nth_tick
-from ChartTools import autolabel
-from ChartTools import set_axes_common_properties
-from ChartTools import text_box
+from common.logger_init import init_logger
+from common.result_value import ResultKo, ResultOk, ResultValue
+from report.ChartTools import remove_tick_lines
+from report.ChartTools import every_nth_tick
+from report.ChartTools import autolabel
+from report.ChartTools import set_axes_common_properties
+from report.ChartTools import text_box
 
 ok_codes = [200, 202]
 
@@ -730,7 +730,6 @@ def create_report(log_file:str, output_path:str, report_type:str, report_title:s
         plt.savefig(os.path.join(output_path
                                 ,"{prefix}All-CHARTS.{fmt}".format(fmt=report_type, prefix=sample_date))
                    ,format=report_type
-                   ,papertype=paper_type 
                    ,bbox_inches='tight'
                    ,pad_inches=0.5)
 
@@ -770,9 +769,9 @@ def main(args: argparse.Namespace) -> ResultValue:
     return rv
 
 if __name__ == "__main__":
-    init_logger('/tmp', "jm-report.log"
-               ,log_level=logging.DEBUG
-               ,std_out_log_level=logging.DEBUG)
+    print("Starting ...")
+    init_logger('/Users/ERIZZAG5J/Work/tmp', "jmeter-report.log",log_level=logging.INFO, std_out_log_level=logging.WARNING
+               ,disable_logging=["urllib3.connectionpool"])
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_frame", "-df", nargs=1,

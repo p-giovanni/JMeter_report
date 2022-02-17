@@ -1,6 +1,7 @@
 
 import os
 import sys
+from typing import List
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -8,7 +9,8 @@ from logging.handlers import RotatingFileHandler
 # ----------------------------------------
 # init_logger
 # ----------------------------------------
-def init_logger(log_dir:str, file_name:str, log_level, std_out_log_level=logging.ERROR) -> None :
+def init_logger(log_dir:str, file_name:str, log_level, std_out_log_level=logging.ERROR
+                ,disable_logging:List[str]=[]) -> None :
     """
     Logger initializzation for file logging and stdout logging with
     different level.
@@ -23,7 +25,7 @@ def init_logger(log_dir:str, file_name:str, log_level, std_out_log_level=logging
     formatter = logging.Formatter(dap_format)
     # File logger.
     root.setLevel(logging.DEBUG)
-    fh = RotatingFileHandler(os.path.join(log_dir, file_name), maxBytes=1000000, backupCount=5)
+    fh = RotatingFileHandler(os.path.join(log_dir, file_name), maxBytes=10000000, backupCount=5)
     fh.setLevel(log_level)
     fh.setFormatter(formatter)
     root.addHandler(fh)
@@ -34,6 +36,6 @@ def init_logger(log_dir:str, file_name:str, log_level, std_out_log_level=logging
     ch.setFormatter(formatter)
     root.addHandler(ch)
 
-    for _ in ("urllib3", "urllib3.connectionpool", "matplotlib", "chardet"):
+    for _ in disable_logging:
         logging.getLogger(_).setLevel(logging.CRITICAL)
 

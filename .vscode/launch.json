@@ -1,64 +1,13 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
     "configurations": [
         {
-            "name": "Dataframe",
+            "name": "Python: CreateReport",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/src/CreateReport.py",
+            "program": "${workspaceFolder}/src/report/CreateReport.py",
             "console": "integratedTerminal",
-            "args": ["--data_frame", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
-        },
-        {
-            "name": "Chart Threads",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/CreateReport.py",
-            "console": "integratedTerminal",
-            "args": ["--chart", "thread", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
-        },
-        {
-            "name": "Chart Elapsed",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/CreateReport.py",
-            "console": "integratedTerminal",
-            "args": ["--chart", "elapsed", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
-        },
-        {
-            "name": "Chart Binned Elapsed",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/CreateReport.py",
-            "console": "integratedTerminal",
-            "args": ["--chart", "ebinned", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
-        },
-        {
-            "name": "Chart Frequency",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/CreateReport.py",
-            "console": "integratedTerminal",
-            "args": ["--chart", "frequency", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
-        },
-        {
-            "name": "Chart TPS",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/CreateReport.py",
-            "console": "integratedTerminal",
-            "args": ["--chart", "tps", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl"]
-        },
-        {
-            "name": "Report",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/CreateReport.py",
-            "console": "integratedTerminal",
-            "args": ["--report", "/tmp/MvtC2CGateway-C2C-only_20180516_153201-.jtl", "/tmp", "jpg"]
+            "args": ["--report", "/Users/ERIZZAG5J/Work/jmeter/VIDEO_API-playback_20220117_100447.jtl", "/Users/ERIZZAG5J/Work/jmeter", "JPG",
+                     "--chart_title", "Playback - STAGE"]
         }
     ]
-}   
+}
