@@ -7,6 +7,6 @@ PROG_PATH="./src/report/CreateReport.py"
 
 export PYTHONPATH="${PROJECT_HOME}/src:${PYTHONPATH}"
 
-python ${PROJECT_HOME}/${PROG_PATH} --report $1 $2 $3 --chart_title "VIDEO_API_Playback_STAGE"
+python ${PROJECT_HOME}/${PROG_PATH} --report $1 $2 $3 $4 --chart_title "VAS"
 exit $?
 

@@ -636,7 +636,7 @@ def single_chart(chart_name:str, file_name:str, labels:dict) -> ResultValue:
     log.info(" <<")
     return rv
 
-def create_report(log_file:str, output_path:str, report_type:str, report_title:str) -> ResultValue:
+def create_report(log_file:str, output_path:str, report_file_name:str, report_type:str, report_title:str) -> ResultValue:
     log = logging.getLogger('create_report')
     log.info(" >>")
     rv: ResultValue = ResultKo(Exception("Error"))
@@ -725,10 +725,9 @@ def create_report(log_file:str, output_path:str, report_type:str, report_title:s
         if text.is_ok() == True:
             text_box(ax[idx], text(), fontsize=labels['quantiles'][1], colors=["#e5e5e5", "#000000", "#000000"], x=0.2, y=0.5)    
 
-        sample_date = datetime.now().strftime("%Y%m%d")
-        paper_type = 'a4'
-        plt.savefig(os.path.join(output_path
-                                ,"{prefix}All-CHARTS.{fmt}".format(fmt=report_type, prefix=sample_date))
+        sample_date = datetime.now().strftime("%Y%m%d-%H%M%S")
+        file_name = "{prefix}-{fi}.{fmt}".format(fi=report_file_name,fmt=report_type, prefix=sample_date)
+        plt.savefig(os.path.join(output_path ,file_name)
                    ,format=report_type
                    ,bbox_inches='tight'
                    ,pad_inches=0.5)
@@ -760,7 +759,14 @@ def main(args: argparse.Namespace) -> ResultValue:
         elif args.chart is not None:
             rv = single_chart(args.chart[0], args.chart[1], labels=labels())
         elif args.report is not None:
-            rv = create_report(args.report[0], args.report[1], args.report[2],report_title=args.chart_title[0])
+            title = "Default title"
+            if args.chart_title is not None:
+                title = args.chart_title[0]
+            rv = create_report(log_file=args.report[0]
+                              ,output_path=args.report[1]
+                              ,report_file_name=args.report[2]
+                              ,report_type=args.report[3]
+                              ,report_title=title)
 
     except Exception as ex:
         log.error("Exception caught - {ex}".format(ex=ex))
@@ -780,8 +786,8 @@ if __name__ == "__main__":
                         help="The title to be printed on the chart.")
     parser.add_argument("--chart", "-c", nargs=2,
                         help="Create the named chart using the given file name [thread|elapsed|ebinned|frequency].")
-    parser.add_argument("--report", "-r", nargs=3,
-                        help="log file, output path, [PDF|JPG|PNG]. Create the report using the given log file and save it in the given path.")
+    parser.add_argument("--report", "-r", nargs=4,
+                        help="log file, output path, report file name,[PDF|JPG|PNG]. Create the report using the given log file and save it in the given path.")
     args = parser.parse_args()
 
     rv = main(args)

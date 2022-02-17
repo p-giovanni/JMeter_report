@@ -1,13 +1,15 @@
 {
     "configurations": [
         {
-            "name": "Python: CreateReport",
+            "name": "PERS JMeter report",
             "type": "python",
             "request": "launch",
+            "env": {"PYTHONPATH": "${workspaceRoot}/src/report:${workspaceRoot}/src/common:${workspaceRoot}/src"},
             "program": "${workspaceFolder}/src/report/CreateReport.py",
             "console": "integratedTerminal",
-            "args": ["--report", "/Users/ERIZZAG5J/Work/jmeter/VIDEO_API-playback_20220117_100447.jtl", "/Users/ERIZZAG5J/Work/jmeter", "JPG",
-                     "--chart_title", "Playback - STAGE"]
+            "args": [
+                "--report", "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220216_080823.jtl","/Users/ERIZZAG5J/Work/jmeter/","VasReport","jpg",
+            ]
         }
     ]
 }
