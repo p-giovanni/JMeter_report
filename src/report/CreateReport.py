@@ -126,7 +126,7 @@ def create_label_dict(language:str="it")-> ResultValue :
       ,"stats sample num":          ("Numero campioni: {n}\nCampioni in errore: {er}\n")
                
       ,"stats elapsed":             ("Tempo di servizio minimo: {min} (ms)\nTempo di servizio massimo: {max} (ms)\nTempo di servizio medio: {avg} (ms)\nVarianza: {stde} (ms)\nTempo di servizio - mediana: {med} (ms)\n")
-      ,"stats max threads":         ("Numero massimo di thread: {th} (ms)\n")
+      ,"stats max threads":         ("Numero massimo di thread: {th} \n")
                
       ,"quantiles":                 ("", 18)
       ,"statistics":                ("", 18)
@@ -170,7 +170,7 @@ def create_label_dict(language:str="it")-> ResultValue :
       ,"stats sample num":          ("Number of samples: {n}\nSamples in error: {er}\n")
               
       ,"stats elapsed":             ("Elapsed min: {min} (ms)\nElapsed max: {max} (ms)\nElapsed mean: {avg} (ms)\nStandard error: {stde} (ms)\nElapsed median: {med} (ms)\n")
-      ,"stats max threads":         ("Max threads num: {th} (ms)\n")
+      ,"stats max threads":         ("Max threads num: {th} \n")
       ,"quantiles":                 ("", 18)
       ,"statistics":                ("", 18)
       ,"notes":                     ("", 18)
