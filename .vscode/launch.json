@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/src/report/CreateReport.py",
             "console": "integratedTerminal",
             "args": [
-                "--report", "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220216_080823.jtl","/Users/ERIZZAG5J/Work/jmeter/","VasReport","jpg",
+                "--report", "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220224_154432.jtl","/Users/ERIZZAG5J/Work/jmeter/","VasReport","jpg",
             ]
         }
     ]

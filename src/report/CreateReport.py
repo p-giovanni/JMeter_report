@@ -530,22 +530,30 @@ def config_elapsed_frequency_chart(df:pd.DataFrame
     try:
         # Set the data set to be visualized.
         bin_step = 250
-        cut_bins = list(range(0, global_statistics["max elapsed"], bin_step))
-        bin_size = len(cut_bins)
 
-        df['elapsed binned'] = pd.cut(df['elapsed'], bins=cut_bins, right=True)
-        frequencies = df['elapsed binned'].value_counts(sort=False)
+        for idx in [0, 1, 2, 3]:
+            cut_bins = list(range(0, global_statistics["max elapsed"], bin_step))
+            bin_size = len(cut_bins)
 
-        # Quality check.
-        #assert df.shape[0] == df['elapsed binned'].value_counts().sum(), "The aggregate form must have the same total number of the total num of sample."
+            df['elapsed binned'] = pd.cut(df['elapsed'], bins=cut_bins, right=True)
+            frequencies = df['elapsed binned'].value_counts(sort=False)
+            if len(cut_bins) > 100:
+                log.info("Too many bins {b}".format(b=frequencies[0]))
+                bin_step = int(bin_step * 3)
+                continue
 
-        y = None
-        if type_of_chart == TypeOfChart.FREQUENCIES:
-            y = frequencies
-            labels["elapsed-frequency y"]=labels["elapsed-frequency y #"]
-        else:
-            y = frequencies.apply(lambda row: round((row / df.shape[0]) * 100, 1))
-            labels["elapsed-frequency y"]=labels["elapsed-frequency y %"]
+            # Quality check.
+            #assert df.shape[0] == df['elapsed binned'].value_counts().sum(), "The aggregate form must have the same total number of the total num of sample."
+
+            y = None
+            if type_of_chart == TypeOfChart.FREQUENCIES:
+                y = frequencies
+                labels["elapsed-frequency y"]=labels["elapsed-frequency y #"]
+            else:
+                y = frequencies.apply(lambda row: round((row / df.shape[0]) * 100, 1))
+                labels["elapsed-frequency y"]=labels["elapsed-frequency y %"]
+            break
+        
     except Exception as ex:
         msg = "config_elapsed_frequency_chart failed - {ex}".format(ex=ex)
         log.error(msg)
@@ -776,7 +784,7 @@ def main(args: argparse.Namespace) -> ResultValue:
 
 if __name__ == "__main__":
     print("Starting ...")
-    init_logger('/Users/ERIZZAG5J/Work/tmp', "jmeter-report.log",log_level=logging.INFO, std_out_log_level=logging.WARNING
+    init_logger('/Users/ERIZZAG5J/Work/tmp', "jmeter-report.log",log_level=logging.DEBUG, std_out_log_level=logging.WARNING
                ,disable_logging=["urllib3.connectionpool"])
 
     parser = argparse.ArgumentParser()
