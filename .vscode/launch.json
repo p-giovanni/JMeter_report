@@ -10,6 +10,26 @@
             "args": [
                 "--report", "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220224_154432.jtl","/Users/ERIZZAG5J/Work/jmeter/","VasReport","jpg",
             ]
-        }
+        },{
+            "name": "PERS - S3 JMeterFileMerge",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/tools/JMeterFileMerge.py",
+            "console": "integratedTerminal",
+            "env": {"PYTHONPATH": "${workspaceRoot}/src/common"},
+            "args": [
+                "${workspaceRoot}/config/JMeterS3MergeFileConfig.json"
+            ]
+        },{
+            "name": "PERS - LOCAL - JMeterFileMerge",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/tools/JMeterFileMerge.py",
+            "console": "integratedTerminal",
+            "env": {"PYTHONPATH": "${workspaceRoot}/src/common"},
+            "args": [
+                "${workspaceRoot}/config/JMeterMergeFileConfig.json"
+            ]
+        },
     ]
 }
