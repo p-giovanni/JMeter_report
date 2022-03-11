@@ -2,16 +2,20 @@
     "merge_file": "/Users/ERIZZAG5J/Work/jmeter/merge_file.jtl",
     "file_list": [
         {
-            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220308_164803-0003.jtl",
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160802-0012.jtl",
             "thread_prefix": "node-01 "
         },
         {
-            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220308_164828-0003.jtl",
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160806-0003.jtl",
             "thread_prefix": "node-02 "
         },
         {
-            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220308_164837-0026.jtl",
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160824-0085.jtl",
             "thread_prefix": "node-03 "
+        },
+        {
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160829-0036.jtl",
+            "thread_prefix": "node-04 "
         }
     ]
 }
