@@ -240,7 +240,7 @@ def get_dataframe_from_csv(data_file: str, ok_codes: List = [200, 202]) -> Resul
 
         df = pd.read_csv(data_file, sep='#', lineterminator='\n',
                          low_memory=False, dtype=dtype_dict)
-        df["timeStamp"] = pd.to_datetime(df["timeStamp"], unit='ms')
+        df["timeStamp"] = pd.to_datetime(df["timeStamp"]) #, unit='ms')
         df.set_index("timeStamp", inplace=True)
         df.sort_index(axis=0, ascending=True, inplace=True)
         #df.sort_values(by=["timeStamp"], inplace=True)

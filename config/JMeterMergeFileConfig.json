@@ -2,21 +2,23 @@
     "merge_file": "/Users/ERIZZAG5J/Work/jmeter/merge_file.jtl",
     "file_list": [
         {
-            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160802-0012.jtl",
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VIDEO-API-listing-sport-app_20220316_131423-0072.jtl",
             "thread_prefix": "node-01 "
         },
         {
-            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160806-0003.jtl",
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VIDEO-API-listing-sport-app_20220316_131427-0089.jtl",
             "thread_prefix": "node-02 "
         },
         {
-            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160824-0085.jtl",
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VIDEO-API-listing-sport-app_20220316_131452-0095.jtl",
             "thread_prefix": "node-03 "
         },
         {
-            "file": "/Users/ERIZZAG5J/Work/jmeter/VAS-manifest-akamai_20220310_160829-0036.jtl",
+            "file": "/Users/ERIZZAG5J/Work/jmeter/VIDEO-API-listing-sport-app_20220316_131458-0024.jtl",
             "thread_prefix": "node-04 "
         }
     ]
 }
+
+
 
